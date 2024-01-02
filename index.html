@@ -1,0 +1,152 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>News App</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <style>
+      body{
+        background-color: bisque;
+      }
+      .card-mo{
+        background-color: rgba(237, 202, 159, 0.617);
+        border: 0px solid;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 20px;
+      }
+      .btn.btn-primary.g,
+      #Search,
+      #prev,
+      #next{
+        background-color: pink;
+        border: 0px solid ;
+        color: black;
+      }
+      .btn.btn-primary.g:hover,
+      #Search:hover,
+      #prev:hover,
+      #next:hover{
+        background-color: rgba(255, 105, 180, 0.802);
+        color: whitesmoke;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: rgba(237, 202, 159, 0.877)";>
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Menu</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Blog</a>
+            </li>
+          </ul>
+          <div>
+            <form class="d-flex" role="search">
+              <input
+                id="searchInput"
+                class="form-control me-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+              />
+              <button id="Search" class="btn btn-outline-success" type="submit">
+                Search
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+        <h1>Welcome to News_Daily (<span id="resultCount"> Results</span>)</h1>
+      <div class="row content">
+        <div class="card my-4 mx-3" style="width: 18rem">
+        </div>
+
+      
+    </div>
+      <div class="d-flex justify-content-around">
+      <button id="prev" class="btn btn-primary">< Previous</button>
+      <button id="next" class="btn btn-primary">Next ></button>
+      </div>
+    <script>
+      let currentQuery = "sports"
+      let currentPage = 1
+      console.log("Initiating");
+      const fetchNews = async (page, q)=>{
+        var url = 'https://newsapi.org/v2/everything?' +
+          'q=' + q+
+          '&from=2023-12-30&' +
+          'pageSize=20&' +
+          'page=' +page+
+          '&sortBy=popularity&' +
+          'apiKey=8a8f707c8f0f4757a8318821c7b4ea76';
+
+        var req = new Request(url);
+        let a = await fetch(req)
+        let response = await a.json()
+        console.log(JSON.stringify(response))
+resultCount.innerHTML = response.totalResults;
+let str =  "";
+for (let item of response.articles) {
+  str = str + `<div class="card-mo"
+    <div class="card my-6 mx-3" style="width: 18rem;">
+    <img src="${item.urlToImage}" class="card-img-top" alt="..." />
+    <div class="card-body">
+    <h5 class="card-title">${item.title}</h5>
+    <p class="card-text">
+    ${item.description.slice(0,200)}...
+    </p>
+    <a href="${item.url}" target="_blank" class="btn btn-primary g">Read More...</a>
+    </div>
+    </div>
+    </div>`;
+}
+ document.querySelector(".content").innerHTML = str;
+    }
+    
+    fetchNews(1, currentQuery)
+    
+    Search.addEventListener("click", (e) => {
+    e.preventDefault();
+    let query = searchInput.value;
+    currentQuery = query
+    fetchNews(currentPage, currentQuery)});
+
+    prev.addEventListener("click", (e) => {
+    e.preventDefault();
+    currentPage = currentPage - 1;
+    fetchNews(currentPage, currentQuery)});
+
+    next.addEventListener("click", (e) => {
+    e.preventDefault();
+    currentPage = currentPage + 1;
+    fetchNews(currentPage, currentQuery)});
+
+
+    
+    </script>
+  </body>
+</html>
